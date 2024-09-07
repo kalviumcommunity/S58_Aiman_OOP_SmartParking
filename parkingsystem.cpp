@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
 class Vehicle {
@@ -7,15 +6,11 @@ public:
     string licensePlate;
     string vehicleType;
 
-    Vehicle(string lp, string vt) {
-        // Using 'this' pointer to reference current object
-        this->licensePlate = lp;
-        this->vehicleType = vt;
-    }
+    Vehicle(string lp, string vt) : licensePlate(lp), vehicleType(vt) {}
 
     void displayDetails() {
-        cout << "Vehicle Type: " << this->vehicleType << endl;
-        cout << "License Plate: " << this->licensePlate << endl;
+        cout << "Vehicle Type: " << vehicleType << endl;
+        cout << "License Plate: " << licensePlate << endl;
     }
 };
 
@@ -25,132 +20,58 @@ public:
     bool isOccupied;
     Vehicle* parkedVehicle;
 
-    ParkingSpot(int sn) {
-        // Using 'this' pointer to reference current object
-        this->spotNumber = sn;
-        this->isOccupied = false;
-        this->parkedVehicle = nullptr;
-    }
+    ParkingSpot(int sn) : spotNumber(sn), isOccupied(false), parkedVehicle(nullptr) {}
 
     void occupySpot(Vehicle* vehicle) {
-        if (!this->isOccupied) {
-            this->isOccupied = true;
-            this->parkedVehicle = vehicle;
-            cout << "Spot " << this->spotNumber << " is now occupied by vehicle with license plate: " << vehicle->licensePlate << endl;
+        if (!isOccupied) {
+            isOccupied = true;
+            parkedVehicle = vehicle;
+            cout << "Spot " << spotNumber << " is now occupied by " << vehicle->licensePlate << "." << endl;
         } else {
-            cout << "Spot " << this->spotNumber << " is already occupied." << endl;
+            cout << "Spot " << spotNumber << " is already occupied." << endl;
         }
     }
 
     void freeSpot() {
-        if (this->isOccupied) {
-            cout << "Spot " << this->spotNumber << " is now free. Vehicle with license plate " << this->parkedVehicle->licensePlate << " has checked out." << endl;
-            this->isOccupied = false;
-            this->parkedVehicle = nullptr;
+        if (isOccupied) {
+            int hours;
+            cout << "Enter the number of hours the vehicle was parked: ";
+            cin >> hours;
+            int amount = hours * 50;
+            cout << "Total amount to be paid: Rs " << amount << endl;
+
+            cout << "Spot " << spotNumber << " is now free." << endl;
+            parkedVehicle = nullptr;
+            isOccupied = false;
         } else {
-            cout << "Spot " << this->spotNumber << " is already free." << endl;
-        }
-    }
-};
-
-class ParkingSystem {
-public:
-    vector<ParkingSpot*> spots;
-
-    ParkingSystem(int numSpots = 5) {  // Default number of spots is set to 5
-        for (int i = 1; i <= numSpots; i++) {
-            spots.push_back(new ParkingSpot(i));
+            cout << "Spot " << spotNumber << " is already free." << endl;
         }
     }
 
-    void parkVehicle(Vehicle* vehicle) {
-        for (auto spot : spots) {
-            if (!spot->isOccupied) {
-                spot->occupySpot(vehicle);
-                return;
-            }
-        }
-        cout << "No available parking spots for vehicle with license plate: " << vehicle->licensePlate << endl;
-    }
-
-    void checkoutVehicle(int spotNumber) {
-        if (spotNumber > 0 && spotNumber <= spots.size()) {
-            spots[spotNumber - 1]->freeSpot();
+    void displayStatus() {
+        if (isOccupied) {
+            cout << "Spot " << spotNumber << " is occupied by " << parkedVehicle->licensePlate << endl;
         } else {
-            cout << "Invalid spot number." << endl;
-        }
-    }
-
-    void listAvailableSpots() {
-        cout << "\nAvailable Spots:\n";
-        for (auto spot : spots) {
-            if (!spot->isOccupied) {
-                cout << "Spot " << spot->spotNumber << " is available." << endl;
-            }
-        }
-    }
-
-    void listParkedVehicles() {
-        cout << "\nParked Vehicles:\n";
-        for (auto spot : spots) {
-            if (spot->isOccupied) {
-                cout << "Spot " << spot->spotNumber << ": ";
-                spot->parkedVehicle->displayDetails();
-            }
-        }
-    }
-
-    ~ParkingSystem() {
-        for (auto spot : spots) {
-            delete spot;
+            cout << "Spot " << spotNumber << " is free." << endl;
         }
     }
 };
 
 int main() {
-    ParkingSystem* parkingSystem = new ParkingSystem();  // Default to 5 spots
+    const int totalSpots = 5;
+    ParkingSpot parkingSpots[totalSpots] = {ParkingSpot(1), ParkingSpot(2), ParkingSpot(3), ParkingSpot(4), ParkingSpot(5)};
 
-    int choice;
-    while (true) {
-        cout << "\nMenu:\n";
-        cout << "1. Park a Vehicle\n";
-        cout << "2. Checkout a Vehicle\n";
-        cout << "3. List Available Spots\n";
-        cout << "4. List Parked Vehicles\n";
-        cout << "5. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
+    Vehicle car1("ABC123", "Car");
+    Vehicle car2("XYZ789", "Car");
 
-        if (choice == 1) {
-            string licensePlate, vehicleType;
-            cout << "Enter Vehicle License Plate: ";
-            cin >> licensePlate;
-            cout << "Enter Vehicle Type (Car/Bike): ";
-            cin >> vehicleType;
-            Vehicle* vehicle = new Vehicle(licensePlate, vehicleType);
-            parkingSystem->parkVehicle(vehicle);
+    parkingSpots[0].occupySpot(&car1);
+    parkingSpots[1].occupySpot(&car2);
 
-        } else if (choice == 2) {
-            int spotNumber;
-            cout << "Enter the spot number to checkout: ";
-            cin >> spotNumber;
-            parkingSystem->checkoutVehicle(spotNumber);
+    parkingSpots[0].displayStatus();
+    parkingSpots[1].displayStatus();
 
-        } else if (choice == 3) {
-            parkingSystem->listAvailableSpots();
+    parkingSpots[0].freeSpot();
+    parkingSpots[1].freeSpot();
 
-        } else if (choice == 4) {
-            parkingSystem->listParkedVehicles();
-
-        } else if (choice == 5) {
-            cout << "Exiting the simulation." << endl;
-            break;
-
-        } else {
-            cout << "Invalid choice, please try again." << endl;
-        }
-    }
-
-    delete parkingSystem;
     return 0;
 }
