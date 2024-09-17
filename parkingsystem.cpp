@@ -8,7 +8,6 @@ public:
     string vehicleType;
 
     Vehicle(string lp, string vt) {
-        // Using 'this' pointer to reference current object
         this->licensePlate = lp;
         this->vehicleType = vt;
     }
@@ -26,7 +25,6 @@ public:
     Vehicle* parkedVehicle;
 
     ParkingSpot(int sn) {
-        // Using 'this' pointer to reference current object
         this->spotNumber = sn;
         this->isOccupied = false;
         this->parkedVehicle = nullptr;
@@ -57,6 +55,10 @@ class ParkingSystem {
 public:
     ParkingSpot* spots[5];  // Array of parking spots
 
+    // Static variables to track total vehicles and revenue
+    static int totalVehiclesParked;
+    static int totalRevenue;
+
     ParkingSystem() {
         // Initialize 5 parking spots
         for (int i = 0; i < 5; i++) {
@@ -68,6 +70,7 @@ public:
         for (int i = 0; i < 5; i++) {
             if (!spots[i]->isOccupied) {
                 spots[i]->occupySpot(vehicle);
+                totalVehiclesParked++;  // Increment total vehicles parked
                 return;
             }
         }
@@ -82,6 +85,7 @@ public:
                 cin >> hours;
                 int fee = hours * 50;
                 spots[spotNumber - 1]->freeSpot();
+                totalRevenue += fee;  // Add the fee to total revenue
                 cout << "Parking fee: Rs " << fee << endl;
                 cout << "Thank you! Have a nice day!\n";
             } else {
@@ -111,12 +115,22 @@ public:
         }
     }
 
+    static void displayStatistics() {
+        cout << "\n--- Parking Statistics ---\n";
+        cout << "Total Vehicles Parked: " << totalVehiclesParked << endl;
+        cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
+    }
+
     ~ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             delete spots[i];
         }
     }
 };
+
+// Initialize static variables
+int ParkingSystem::totalVehiclesParked = 0;
+int ParkingSystem::totalRevenue = 0;
 
 int main() {
     ParkingSystem* parkingSystem = new ParkingSystem();  // 5 spots by default
@@ -128,7 +142,8 @@ int main() {
         cout << "2. Checkout a Vehicle\n";
         cout << "3. List Available Spots\n";
         cout << "4. List Parked Vehicles\n";
-        cout << "5. Exit\n";
+        cout << "5. Display Parking Statistics\n";
+        cout << "6. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -154,6 +169,9 @@ int main() {
             parkingSystem->listParkedVehicles();
 
         } else if (choice == 5) {
+            ParkingSystem::displayStatistics();  // Call the static method to display statistics
+
+        } else if (choice == 6) {
             cout << "Exiting the simulation." << endl;
             break;
 
