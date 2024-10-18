@@ -3,50 +3,92 @@
 using namespace std;
 
 class Vehicle {
-public:
+private:
     string licensePlate;
     string vehicleType;
 
+public:
     Vehicle(string lp, string vt) {
         this->licensePlate = lp;
         this->vehicleType = vt;
     }
 
+    // Accessors
+    string getLicensePlate() {
+        return licensePlate;
+    }
+
+    string getVehicleType() {
+        return vehicleType;
+    }
+
+    // Mutators
+    void setLicensePlate(string lp) {
+        licensePlate = lp;
+    }
+
+    void setVehicleType(string vt) {
+        vehicleType = vt;
+    }
+
     void displayDetails() {
-        cout << "Vehicle Type: " << this->vehicleType << endl;
-        cout << "License Plate: " << this->licensePlate << endl;
+        cout << "Vehicle Type: " << vehicleType << endl;
+        cout << "License Plate: " << licensePlate << endl;
     }
 };
 
 class ParkingSpot {
-public:
+private:
     int spotNumber;
     bool isOccupied;
     Vehicle* parkedVehicle;
 
+public:
     ParkingSpot(int sn) {
         this->spotNumber = sn;
         this->isOccupied = false;
         this->parkedVehicle = nullptr;
     }
 
+    // Accessors
+    int getSpotNumber() {
+        return spotNumber;
+    }
+
+    bool getIsOccupied() {
+        return isOccupied;
+    }
+
+    Vehicle* getParkedVehicle() {
+        return parkedVehicle;
+    }
+
+    // Mutators
+    void setIsOccupied(bool occupied) {
+        isOccupied = occupied;
+    }
+
+    void setParkedVehicle(Vehicle* vehicle) {
+        parkedVehicle = vehicle;
+    }
+
     void occupySpot(Vehicle* vehicle) {
-        if (!this->isOccupied) {
-            this->isOccupied = true;
-            this->parkedVehicle = vehicle;
-            cout << "Spot " << this->spotNumber << " is now occupied by vehicle with license plate: " << vehicle->licensePlate << endl;
+        if (!isOccupied) {
+            setIsOccupied(true);
+            setParkedVehicle(vehicle);
+            cout << "Spot " << spotNumber << " is now occupied by vehicle with license plate: " << vehicle->getLicensePlate() << endl;
         } else {
-            cout << "Spot " << this->spotNumber << " is already occupied." << endl;
+            cout << "Spot " << spotNumber << " is already occupied." << endl;
         }
     }
 
     void freeSpot() {
-        if (this->isOccupied) {
-            cout << "Spot " << this->spotNumber << " is now free. Vehicle with license plate " << this->parkedVehicle->licensePlate << " has checked out." << endl;
-            this->isOccupied = false;
-            this->parkedVehicle = nullptr;
+        if (isOccupied) {
+            cout << "Spot " << spotNumber << " is now free. Vehicle with license plate " << parkedVehicle->getLicensePlate() << " has checked out." << endl;
+            setIsOccupied(false);
+            setParkedVehicle(nullptr);
         } else {
-            cout << "Spot " << this->spotNumber << " is already free." << endl;
+            cout << "Spot " << spotNumber << " is already free." << endl;
         }
     }
 };
@@ -55,12 +97,10 @@ class ParkingSystem {
 public:
     ParkingSpot* spots[5];  // Array of parking spots
 
-    // Static variables to track total vehicles and revenue
     static int totalVehiclesParked;
     static int totalRevenue;
 
     ParkingSystem() {
-        // Initialize 5 parking spots
         for (int i = 0; i < 5; i++) {
             spots[i] = new ParkingSpot(i + 1);
         }
@@ -68,18 +108,18 @@ public:
 
     void parkVehicle(Vehicle* vehicle) {
         for (int i = 0; i < 5; i++) {
-            if (!spots[i]->isOccupied) {
+            if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
-                totalVehiclesParked++;  // Increment total vehicles parked
+                totalVehiclesParked++;
                 return;
             }
         }
-        cout << "No available parking spots for vehicle with license plate: " << vehicle->licensePlate << endl;
+        cout << "No available parking spots for vehicle with license plate: " << vehicle->getLicensePlate() << endl;
     }
 
     void checkoutVehicle(int spotNumber) {
         if (spotNumber > 0 && spotNumber <= 5) {
-            if (spots[spotNumber - 1]->isOccupied) {
+            if (spots[spotNumber - 1]->getIsOccupied()) {
                 int hours;
                 cout << "How many hours was the vehicle parked? ";
                 cin >> hours;
@@ -99,8 +139,8 @@ public:
     void listAvailableSpots() {
         cout << "\nAvailable Spots:\n";
         for (int i = 0; i < 5; i++) {
-            if (!spots[i]->isOccupied) {
-                cout << "Spot " << spots[i]->spotNumber << " is available." << endl;
+            if (!spots[i]->getIsOccupied()) {
+                cout << "Spot " << spots[i]->getSpotNumber() << " is available." << endl;
             }
         }
     }
@@ -108,9 +148,9 @@ public:
     void listParkedVehicles() {
         cout << "\nParked Vehicles:\n";
         for (int i = 0; i < 5; i++) {
-            if (spots[i]->isOccupied) {
-                cout << "Spot " << spots[i]->spotNumber << ": ";
-                spots[i]->parkedVehicle->displayDetails();
+            if (spots[i]->getIsOccupied()) {
+                cout << "Spot " << spots[i]->getSpotNumber() << ": ";
+                spots[i]->getParkedVehicle()->displayDetails();
             }
         }
     }
@@ -128,7 +168,6 @@ public:
     }
 };
 
-// Initialize static variables
 int ParkingSystem::totalVehiclesParked = 0;
 int ParkingSystem::totalRevenue = 0;
 
@@ -169,7 +208,7 @@ int main() {
             parkingSystem->listParkedVehicles();
 
         } else if (choice == 5) {
-            ParkingSystem::displayStatistics();  // Call the static method to display statistics
+            ParkingSystem::displayStatistics();
 
         } else if (choice == 6) {
             cout << "Exiting the simulation." << endl;
