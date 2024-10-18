@@ -13,27 +13,25 @@ public:
         this->vehicleType = vt;
     }
 
-    // Accessors
     string getLicensePlate() {
-        return licensePlate;
+        return this->licensePlate;
     }
 
     string getVehicleType() {
-        return vehicleType;
+        return this->vehicleType;
     }
 
-    // Mutators
     void setLicensePlate(string lp) {
-        licensePlate = lp;
+        this->licensePlate = lp;
     }
 
     void setVehicleType(string vt) {
-        vehicleType = vt;
+        this->vehicleType = vt;
     }
 
     void displayDetails() {
-        cout << "Vehicle Type: " << vehicleType << endl;
-        cout << "License Plate: " << licensePlate << endl;
+        cout << "Vehicle Type: " << this->vehicleType << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
     }
 };
 
@@ -50,56 +48,46 @@ public:
         this->parkedVehicle = nullptr;
     }
 
-    // Accessors
     int getSpotNumber() {
-        return spotNumber;
+        return this->spotNumber;
     }
 
     bool getIsOccupied() {
-        return isOccupied;
+        return this->isOccupied;
     }
 
     Vehicle* getParkedVehicle() {
-        return parkedVehicle;
-    }
-
-    // Mutators
-    void setIsOccupied(bool occupied) {
-        isOccupied = occupied;
-    }
-
-    void setParkedVehicle(Vehicle* vehicle) {
-        parkedVehicle = vehicle;
+        return this->parkedVehicle;
     }
 
     void occupySpot(Vehicle* vehicle) {
-        if (!isOccupied) {
-            setIsOccupied(true);
-            setParkedVehicle(vehicle);
-            cout << "Spot " << spotNumber << " is now occupied by vehicle with license plate: " << vehicle->getLicensePlate() << endl;
+        if (!this->isOccupied) {
+            this->isOccupied = true;
+            this->parkedVehicle = vehicle;
+            cout << "Spot " << this->spotNumber << " is now occupied by vehicle with license plate: " << vehicle->getLicensePlate() << endl;
         } else {
-            cout << "Spot " << spotNumber << " is already occupied." << endl;
+            cout << "Spot " << this->spotNumber << " is already occupied." << endl;
         }
     }
 
     void freeSpot() {
-        if (isOccupied) {
-            cout << "Spot " << spotNumber << " is now free. Vehicle with license plate " << parkedVehicle->getLicensePlate() << " has checked out." << endl;
-            setIsOccupied(false);
-            setParkedVehicle(nullptr);
+        if (this->isOccupied) {
+            cout << "Spot " << this->spotNumber << " is now free. Vehicle with license plate " << this->parkedVehicle->getLicensePlate() << " has checked out." << endl;
+            this->isOccupied = false;
+            this->parkedVehicle = nullptr;
         } else {
-            cout << "Spot " << spotNumber << " is already free." << endl;
+            cout << "Spot " << this->spotNumber << " is already free." << endl;
         }
     }
 };
 
 class ParkingSystem {
-public:
-    ParkingSpot* spots[5];  // Array of parking spots
-
+private:
+    ParkingSpot* spots[5];
     static int totalVehiclesParked;
     static int totalRevenue;
 
+public:
     ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             spots[i] = new ParkingSpot(i + 1);
@@ -125,7 +113,7 @@ public:
                 cin >> hours;
                 int fee = hours * 50;
                 spots[spotNumber - 1]->freeSpot();
-                totalRevenue += fee;  // Add the fee to total revenue
+                totalRevenue += fee;
                 cout << "Parking fee: Rs " << fee << endl;
                 cout << "Thank you! Have a nice day!\n";
             } else {
@@ -172,7 +160,7 @@ int ParkingSystem::totalVehiclesParked = 0;
 int ParkingSystem::totalRevenue = 0;
 
 int main() {
-    ParkingSystem* parkingSystem = new ParkingSystem();  // 5 spots by default
+    ParkingSystem* parkingSystem = new ParkingSystem();
 
     int choice;
     while (true) {
