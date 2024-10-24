@@ -3,36 +3,31 @@
 using namespace std;
 
 class Vehicle {
-private:
+protected:
     string licensePlate;
     string vehicleType;
 
 public:
-    Vehicle(string lp, string vt) {
-        this->licensePlate = lp;
-        this->vehicleType = vt;
+    Vehicle(string lp, string vt) : licensePlate(lp), vehicleType(vt) {}
+
+    virtual void displayDetails() {
+        cout << "Vehicle Type: " << this->vehicleType << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
     }
 
     string getLicensePlate() {
         return this->licensePlate;
     }
+};
 
-    string getVehicleType() {
-        return this->vehicleType;
-    }
+class Car : public Vehicle {
+public:
+    Car(string lp) : Vehicle(lp, "Car") {}
+};
 
-    void setLicensePlate(string lp) {
-        this->licensePlate = lp;
-    }
-
-    void setVehicleType(string vt) {
-        this->vehicleType = vt;
-    }
-
-    void displayDetails() {
-        cout << "Vehicle Type: " << this->vehicleType << endl;
-        cout << "License Plate: " << this->licensePlate << endl;
-    }
+class Bike : public Vehicle {
+public:
+    Bike(string lp) : Vehicle(lp, "Bike") {}
 };
 
 class ParkingSpot {
@@ -82,7 +77,7 @@ public:
 };
 
 class ParkingSystem {
-private:
+protected:
     ParkingSpot* spots[5];
     static int totalVehiclesParked;
     static int totalRevenue;
@@ -94,7 +89,7 @@ public:
         }
     }
 
-    void parkVehicle(Vehicle* vehicle) {
+    virtual void parkVehicle(Vehicle* vehicle) {
         for (int i = 0; i < 5; i++) {
             if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
@@ -149,10 +144,22 @@ public:
         cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
     }
 
-    ~ParkingSystem() {
+    virtual ~ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             delete spots[i];
         }
+    }
+};
+
+class AdvancedParkingSystem : public ParkingSystem {
+public:
+    void parkVehicle(Vehicle* vehicle) override {
+        // This method can be extended to add additional checks or new behavior for advanced systems
+        ParkingSystem::parkVehicle(vehicle);
+    }
+
+    void offerPremiumParking() {
+        cout << "Premium parking options available for Cars and Bikes.\n";
     }
 };
 
@@ -160,7 +167,7 @@ int ParkingSystem::totalVehiclesParked = 0;
 int ParkingSystem::totalRevenue = 0;
 
 int main() {
-    ParkingSystem* parkingSystem = new ParkingSystem();
+    AdvancedParkingSystem* parkingSystem = new AdvancedParkingSystem();
 
     int choice;
     while (true) {
@@ -180,7 +187,7 @@ int main() {
             cin >> licensePlate;
             cout << "Enter Vehicle Type (Car/Bike): ";
             cin >> vehicleType;
-            Vehicle* vehicle = new Vehicle(licensePlate, vehicleType);
+            Vehicle* vehicle = (vehicleType == "Car") ? new Car(licensePlate) : new Bike(licensePlate);
             parkingSystem->parkVehicle(vehicle);
 
         } else if (choice == 2) {
