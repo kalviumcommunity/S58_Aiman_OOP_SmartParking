@@ -2,37 +2,47 @@
 #include <vector>
 using namespace std;
 
-// Base Vehicle class
+// Abstract class Vehicle
 class Vehicle {
 protected:
     string licensePlate;
     string vehicleType;
 
 public:
+    // Constructor
     Vehicle(string lp, string vt) : licensePlate(lp), vehicleType(vt) {}
 
-    virtual void displayDetails() {
-        cout << "Vehicle Type: " << this->vehicleType << endl;
-        cout << "License Plate: " << this->licensePlate << endl;
-    }
+    // Pure virtual function to be implemented in derived classes
+    virtual void displayDetails() = 0;
 
     string getLicensePlate() {
         return this->licensePlate;
     }
 };
 
-// Derived classes for Car and Bike
+// Derived class Car
 class Car : public Vehicle {
 public:
     Car(string lp) : Vehicle(lp, "Car") {}
+
+    void displayDetails() override {
+        cout << "Vehicle Type: Car" << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
+    }
 };
 
+// Derived class Bike
 class Bike : public Vehicle {
 public:
     Bike(string lp) : Vehicle(lp, "Bike") {}
+
+    void displayDetails() override {
+        cout << "Vehicle Type: Bike" << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
+    }
 };
 
-// ParkingSpot class to manage individual parking spots
+// ParkingSpot class
 class ParkingSpot {
 private:
     int spotNumber;
@@ -40,11 +50,7 @@ private:
     Vehicle* parkedVehicle;
 
 public:
-    ParkingSpot(int sn) {
-        this->spotNumber = sn;
-        this->isOccupied = false;
-        this->parkedVehicle = nullptr;
-    }
+    ParkingSpot(int sn) : spotNumber(sn), isOccupied(false), parkedVehicle(nullptr) {}
 
     int getSpotNumber() {
         return this->spotNumber;
@@ -79,7 +85,7 @@ public:
     }
 };
 
-// Base ParkingSystem class with virtual method parkVehicle
+// ParkingSystem class
 class ParkingSystem {
 protected:
     ParkingSpot* spots[5];
@@ -97,6 +103,7 @@ public:
         for (int i = 0; i < 5; i++) {
             if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
+                vehicle->displayDetails(); // Calls displayDetails() based on vehicle type
                 totalVehiclesParked++;
                 return;
             }
@@ -155,26 +162,11 @@ public:
     }
 };
 
-// Derived AdvancedParkingSystem class to demonstrate method overriding
-class AdvancedParkingSystem : public ParkingSystem {
-public:
-    void parkVehicle(Vehicle* vehicle) override {
-        cout << "Advanced Parking System - Checking for additional conditions.\n";
-        // Call base class parkVehicle to use standard parking logic
-        ParkingSystem::parkVehicle(vehicle);
-    }
-
-    void offerPremiumParking() {
-        cout << "Premium parking options available for Cars and Bikes.\n";
-    }
-};
-
-// Initialize static variables
 int ParkingSystem::totalVehiclesParked = 0;
 int ParkingSystem::totalRevenue = 0;
 
 int main() {
-    AdvancedParkingSystem* parkingSystem = new AdvancedParkingSystem();
+    ParkingSystem* parkingSystem = new ParkingSystem();
 
     int choice;
     while (true) {
