@@ -2,6 +2,7 @@
 #include <vector>
 using namespace std;
 
+// Base Vehicle class
 class Vehicle {
 protected:
     string licensePlate;
@@ -20,6 +21,7 @@ public:
     }
 };
 
+// Derived classes for Car and Bike
 class Car : public Vehicle {
 public:
     Car(string lp) : Vehicle(lp, "Car") {}
@@ -30,6 +32,7 @@ public:
     Bike(string lp) : Vehicle(lp, "Bike") {}
 };
 
+// ParkingSpot class to manage individual parking spots
 class ParkingSpot {
 private:
     int spotNumber;
@@ -76,6 +79,7 @@ public:
     }
 };
 
+// Base ParkingSystem class with virtual method parkVehicle
 class ParkingSystem {
 protected:
     ParkingSpot* spots[5];
@@ -151,10 +155,12 @@ public:
     }
 };
 
+// Derived AdvancedParkingSystem class to demonstrate method overriding
 class AdvancedParkingSystem : public ParkingSystem {
 public:
     void parkVehicle(Vehicle* vehicle) override {
-        // This method can be extended to add additional checks or new behavior for advanced systems
+        cout << "Advanced Parking System - Checking for additional conditions.\n";
+        // Call base class parkVehicle to use standard parking logic
         ParkingSystem::parkVehicle(vehicle);
     }
 
@@ -163,6 +169,7 @@ public:
     }
 };
 
+// Initialize static variables
 int ParkingSystem::totalVehiclesParked = 0;
 int ParkingSystem::totalRevenue = 0;
 
