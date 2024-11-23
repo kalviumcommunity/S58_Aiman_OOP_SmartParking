@@ -18,6 +18,10 @@ public:
     string getLicensePlate() {
         return this->licensePlate;
     }
+
+    string getVehicleType() {
+        return this->vehicleType;
+    }
 };
 
 // Derived class Car
@@ -38,6 +42,28 @@ public:
 
     void displayDetails() override {
         cout << "Vehicle Type: Bike" << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
+    }
+};
+
+// Derived class ElectricCar (new vehicle type)
+class ElectricCar : public Vehicle {
+public:
+    ElectricCar(string lp) : Vehicle(lp, "ElectricCar") {}
+
+    void displayDetails() override {
+        cout << "Vehicle Type: Electric Car" << endl;
+        cout << "License Plate: " << this->licensePlate << endl;
+    }
+};
+
+// Derived class Truck (new vehicle type)
+class Truck : public Vehicle {
+public:
+    Truck(string lp) : Vehicle(lp, "Truck") {}
+
+    void displayDetails() override {
+        cout << "Vehicle Type: Truck" << endl;
         cout << "License Plate: " << this->licensePlate << endl;
     }
 };
@@ -85,34 +111,12 @@ public:
     }
 };
 
-// ParkingStatistics class to handle statistics
-class ParkingStatistics {
-public:
-    static int totalVehiclesParked;
-    static int totalRevenue;
-
-    static void displayStatistics() {
-        cout << "\n--- Parking Statistics ---\n";
-        cout << "Total Vehicles Parked: " << totalVehiclesParked << endl;
-        cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
-    }
-
-    static void incrementVehiclesParked() {
-        totalVehiclesParked++;
-    }
-
-    static void addRevenue(int fee) {
-        totalRevenue += fee;
-    }
-};
-
-int ParkingStatistics::totalVehiclesParked = 0;
-int ParkingStatistics::totalRevenue = 0;
-
 // ParkingSystem class
 class ParkingSystem {
 protected:
     ParkingSpot* spots[5];
+    static int totalVehiclesParked;
+    static int totalRevenue;
 
 public:
     ParkingSystem() {
@@ -126,7 +130,7 @@ public:
             if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
                 vehicle->displayDetails(); // Calls displayDetails() based on vehicle type
-                ParkingStatistics::incrementVehiclesParked();
+                totalVehiclesParked++;
                 return;
             }
         }
@@ -141,7 +145,7 @@ public:
                 cin >> hours;
                 int fee = hours * 50;
                 spots[spotNumber - 1]->freeSpot();
-                ParkingStatistics::addRevenue(fee);
+                totalRevenue += fee;
                 cout << "Parking fee: Rs " << fee << endl;
                 cout << "Thank you! Have a nice day!\n";
             } else {
@@ -171,12 +175,21 @@ public:
         }
     }
 
+    static void displayStatistics() {
+        cout << "\n--- Parking Statistics ---\n";
+        cout << "Total Vehicles Parked: " << totalVehiclesParked << endl;
+        cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
+    }
+
     virtual ~ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             delete spots[i];
         }
     }
 };
+
+int ParkingSystem::totalVehiclesParked = 0;
+int ParkingSystem::totalRevenue = 0;
 
 int main() {
     ParkingSystem* parkingSystem = new ParkingSystem();
@@ -197,9 +210,23 @@ int main() {
             string licensePlate, vehicleType;
             cout << "Enter Vehicle License Plate: ";
             cin >> licensePlate;
-            cout << "Enter Vehicle Type (Car/Bike): ";
+            cout << "Enter Vehicle Type (Car/Bike/ElectricCar/Truck): ";
             cin >> vehicleType;
-            Vehicle* vehicle = (vehicleType == "Car") ? new Car(licensePlate) : new Bike(licensePlate);
+
+            Vehicle* vehicle;
+            if (vehicleType == "Car") {
+                vehicle = new Car(licensePlate);
+            } else if (vehicleType == "Bike") {
+                vehicle = new Bike(licensePlate);
+            } else if (vehicleType == "ElectricCar") {
+                vehicle = new ElectricCar(licensePlate);
+            } else if (vehicleType == "Truck") {
+                vehicle = new Truck(licensePlate);
+            } else {
+                cout << "Invalid vehicle type." << endl;
+                continue;
+            }
+
             parkingSystem->parkVehicle(vehicle);
 
         } else if (choice == 2) {
@@ -215,7 +242,7 @@ int main() {
             parkingSystem->listParkedVehicles();
 
         } else if (choice == 5) {
-            ParkingStatistics::displayStatistics();
+            ParkingSystem::displayStatistics();
 
         } else if (choice == 6) {
             cout << "Exiting the simulation." << endl;
