@@ -85,12 +85,34 @@ public:
     }
 };
 
+// ParkingStatistics class to handle statistics
+class ParkingStatistics {
+public:
+    static int totalVehiclesParked;
+    static int totalRevenue;
+
+    static void displayStatistics() {
+        cout << "\n--- Parking Statistics ---\n";
+        cout << "Total Vehicles Parked: " << totalVehiclesParked << endl;
+        cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
+    }
+
+    static void incrementVehiclesParked() {
+        totalVehiclesParked++;
+    }
+
+    static void addRevenue(int fee) {
+        totalRevenue += fee;
+    }
+};
+
+int ParkingStatistics::totalVehiclesParked = 0;
+int ParkingStatistics::totalRevenue = 0;
+
 // ParkingSystem class
 class ParkingSystem {
 protected:
     ParkingSpot* spots[5];
-    static int totalVehiclesParked;
-    static int totalRevenue;
 
 public:
     ParkingSystem() {
@@ -104,7 +126,7 @@ public:
             if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
                 vehicle->displayDetails(); // Calls displayDetails() based on vehicle type
-                totalVehiclesParked++;
+                ParkingStatistics::incrementVehiclesParked();
                 return;
             }
         }
@@ -119,7 +141,7 @@ public:
                 cin >> hours;
                 int fee = hours * 50;
                 spots[spotNumber - 1]->freeSpot();
-                totalRevenue += fee;
+                ParkingStatistics::addRevenue(fee);
                 cout << "Parking fee: Rs " << fee << endl;
                 cout << "Thank you! Have a nice day!\n";
             } else {
@@ -149,21 +171,12 @@ public:
         }
     }
 
-    static void displayStatistics() {
-        cout << "\n--- Parking Statistics ---\n";
-        cout << "Total Vehicles Parked: " << totalVehiclesParked << endl;
-        cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
-    }
-
     virtual ~ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             delete spots[i];
         }
     }
 };
-
-int ParkingSystem::totalVehiclesParked = 0;
-int ParkingSystem::totalRevenue = 0;
 
 int main() {
     ParkingSystem* parkingSystem = new ParkingSystem();
@@ -202,7 +215,7 @@ int main() {
             parkingSystem->listParkedVehicles();
 
         } else if (choice == 5) {
-            ParkingSystem::displayStatistics();
+            ParkingStatistics::displayStatistics();
 
         } else if (choice == 6) {
             cout << "Exiting the simulation." << endl;
