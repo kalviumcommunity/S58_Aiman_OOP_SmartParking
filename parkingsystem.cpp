@@ -18,10 +18,6 @@ public:
     string getLicensePlate() {
         return this->licensePlate;
     }
-
-    string getVehicleType() {
-        return this->vehicleType;
-    }
 };
 
 // Derived class Car
@@ -46,10 +42,10 @@ public:
     }
 };
 
-// Derived class ElectricCar (new vehicle type)
+// Derived class ElectricCar
 class ElectricCar : public Vehicle {
 public:
-    ElectricCar(string lp) : Vehicle(lp, "ElectricCar") {}
+    ElectricCar(string lp) : Vehicle(lp, "Electric Car") {}
 
     void displayDetails() override {
         cout << "Vehicle Type: Electric Car" << endl;
@@ -57,7 +53,7 @@ public:
     }
 };
 
-// Derived class Truck (new vehicle type)
+// Derived class Truck
 class Truck : public Vehicle {
 public:
     Truck(string lp) : Vehicle(lp, "Truck") {}
@@ -125,7 +121,7 @@ public:
         }
     }
 
-    virtual void parkVehicle(Vehicle* vehicle) {
+    void parkVehicle(Vehicle* vehicle) {
         for (int i = 0; i < 5; i++) {
             if (!spots[i]->getIsOccupied()) {
                 spots[i]->occupySpot(vehicle);
@@ -181,7 +177,7 @@ public:
         cout << "Total Revenue Generated: Rs " << totalRevenue << endl;
     }
 
-    virtual ~ParkingSystem() {
+    ~ParkingSystem() {
         for (int i = 0; i < 5; i++) {
             delete spots[i];
         }
@@ -212,7 +208,6 @@ int main() {
             cin >> licensePlate;
             cout << "Enter Vehicle Type (Car/Bike/ElectricCar/Truck): ";
             cin >> vehicleType;
-
             Vehicle* vehicle;
             if (vehicleType == "Car") {
                 vehicle = new Car(licensePlate);
@@ -223,10 +218,9 @@ int main() {
             } else if (vehicleType == "Truck") {
                 vehicle = new Truck(licensePlate);
             } else {
-                cout << "Invalid vehicle type." << endl;
+                cout << "Invalid vehicle type!" << endl;
                 continue;
             }
-
             parkingSystem->parkVehicle(vehicle);
 
         } else if (choice == 2) {
